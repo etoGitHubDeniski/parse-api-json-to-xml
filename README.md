@@ -7,7 +7,7 @@
 Файлы:
 - /app/Components/ParseDataClient.php - Клиент
 - /app/Console/Commands/ParseNeometriaCommand.php - Консольная команда
-- /output.xml - Сгенерированый xml файл
+- /output.xml - Сгенерированный xml файл
 
 Материалы:
 - [Документация Laravel. HTTP Client](https://laravel.com/docs/10.x/http-client)
