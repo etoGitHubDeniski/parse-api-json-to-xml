@@ -4,6 +4,11 @@
 
 ## !Внимание. Итоговый код парсит сразу все 4520, это может занять несколько минут.
 
+Файлы:
+- /app/Components/ParseDataClient.php - Клиент
+- /app/Console/Commands/ParseNeometriaCommand.php - Консольная команда
+- /output.xml - Сгенерированый xml файл
+
 Материалы:
 - [Документация Laravel. HTTP Client](https://laravel.com/docs/10.x/http-client)
 - [Документация Guzzle](https://docs.guzzlephp.org/en/stable/)
