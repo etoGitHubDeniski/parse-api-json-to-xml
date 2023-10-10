@@ -12,8 +12,10 @@ class ParseNeometriaCommand extends Command
 
     public function handle()
     {
+        $limit = $this->ask('Сколько записей вывести?', 'all');
+        $offset = $this->ask('С какой записи начать?', 0);
         $client = new ParseDataClient;
-        $response = $client->parse();
+        $response = $client->parse($limit, $offset);
         echo $response;
     }
 }
