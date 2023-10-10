@@ -8,38 +8,26 @@ use SimpleXMLElement;
 
 class ParseDataClient
 {
-    public function parse()
+    public function parse($limit, $offset)
     {
-        // Создаю объект GuzzleHttp клиента
-        $client = new Client();
-
-        // URL с данными о квартирах
-        $url = 'http://neometria.ru/api/flats/';
-
         try {
-            $data = [];
+            // Запрос для определения макс. лимита
+            if ($limit === 'all') {
+                $data = $this->getData();
+                $limit = $data['count'];
+            }
 
-            for ($i = 0; $i <= 4520; $i += 20) {
-                // Отправляю GET запрос и получаю JSON данные
-                $response = $client->get($url . "?limit=20&offset={$i}", [
-                    'headers' => [
-                        'Accept' => 'application/json',
-                    ],
-                    'verify' => false,
-                ]);
-                $jsonData = $response->getBody()->getContents();
-
-                // Преобразую JSON в массив
-                $jsonDecodedData = json_decode($jsonData, true);
-
-                $data = array_merge($data, $jsonDecodedData['results']);
+            if (is_numeric($limit)) {
+                $data = $this->getData($limit, $offset);
+            } else {
+                return $limit . ' - не является числом';
             }
 
             // Создаю корневой элемент XML
             $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><complexes timestamp="' . time() . '"/>');
 
             // Добавляю данные в XML
-            $this->addComplexesDataToXml($xml, $data);
+            $this->addComplexesDataToXml($xml, $data['results']);
 
             // Преобразую SimpleXMLElement в файл XML
             $xml->asXML('output.xml');
@@ -50,6 +38,29 @@ class ParseDataClient
         } catch (Exception $e) {
             echo 'Произошла ошибка: ' . $e->getMessage();
         }
+    }
+
+    private function getData($limit = 1, $offset = 0)
+    {
+        // Создаю объект GuzzleHttp клиента
+        $client = new Client();
+
+        // URL с данными о квартирах
+        $url = 'http://neometria.ru/api/flats/';
+
+        // Отправляю GET запрос и получаю JSON данные
+        $response = $client->get($url . "?limit={$limit}&offset={$offset}", [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'verify' => false,
+        ]);
+        $jsonData = $response->getBody()->getContents();
+
+        // Преобразую JSON в массив
+        $data = json_decode($jsonData, true);
+
+        return $data;
     }
 
     private function addComplexesDataToXml(SimpleXMLElement $xml, array $data)
